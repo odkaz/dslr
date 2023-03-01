@@ -13,21 +13,17 @@ def ascii_histogram(seq) -> None:
     for k in sorted(counted):
         print('{0:5d} {1}'.format(k, '+' * counted[k]))
 
-# main
-a = (0, 1, 1, 1, 2, 3, 7, 7, 23)
-counted = count_elements(a)
-
+# main1
+# a = (0, 1, 1, 1, 2, 3, 7, 7, 23)
+# counted = count_elements(a)
 # print(counted)
 
 
-
-random.seed(1)
-
-vals = [1, 3, 4, 6, 8, 9, 10]
-freq = (random.randint(5, 15) for _ in vals)
-
-data = []
-for f, v in zip(freq, vals):
-    data.extend([v] * f)
-
-ascii_histogram(data)
+# main2
+# random.seed(1)
+# vals = [1, 3, 4, 6, 8, 9, 10]
+# freq = (random.randint(5, 15) for _ in vals)
+# data = []
+# for f, v in zip(freq, vals):
+#     data.extend([v] * f)
+# ascii_histogram(data)
