@@ -1,15 +1,15 @@
-import csv
+import sys
+import util
 
-MAX_WIDTH = 20
+# main
+def main():
+    if len(sys.argv) != 2:
+        url = './datasets/dataset_train.csv'
+    else:
+        url = sys.argv[1]
 
-data = []
+    data = util.read_data(url)
+    util.show_data(data)
 
-with open('./datasets/dataset_train.csv', 'r', encoding="utf-8") as f:
-    spamreader = csv.reader(f)
-    for row in spamreader:
-        data.append(row)
-
-for row in data:
-    for item in row:
-        print('{:>25}'.format(item[:MAX_WIDTH]), end='')
-    print()
+if __name__ == '__main__':
+    main()
