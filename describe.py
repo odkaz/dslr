@@ -70,6 +70,19 @@ def print_format(title, res):
     print('{:>14.6f}'.format(res), end='')
     print()
 
+fields = ['count', 'mean', 'std', 'min', '25%', '50%', '75%', 'max']
+
+def print_vert(title, res):
+    print('----', title, '----')
+    print_format('count', res['count'])
+    print_format('mean', res['mean'])
+    print_format('std', res['std'])
+    print_format('min', res['min'])
+    print_format('25%', res['25%'])
+    print_format('50%', res['50%'])
+    print_format('75%', res['75%'])
+    print_format('max', res['max'])
+
 # main
 def main():
     if len(sys.argv) != 2:
@@ -79,26 +92,36 @@ def main():
 
     data = util.read_data(url)
     titles = data.pop(0)
-
+    results = []
     for i in range(7, 19):
         feature = get_nth_feature(data, i)
-        result = get_stats(feature)
-        print('----', titles[i], '----')
-        print_format('count', result['count'])
-        print_format('mean', result['mean'])
-        print_format('std', result['std'])
-        print_format('min', result['min'])
-        print_format('25%', result['25%'])
-        print_format('50%', result['50%'])
-        print_format('75%', result['75%'])
-        print_format('max', result['max'])
-        print('--------------')
+        res = get_stats(feature)
+        results.append(res)
+
         # result['']
         # data.sort(key=take_second)
         # util.show_data(data)
+
         #show answer
-        s = pd.Series(feature)
-        print(s.describe())
+        # s = pd.Series(feature)
+        # print(s.describe())
+
+    # print first row
+    print('{:5}'.format(''), end='')
+    for i in range(1, 13):
+        msg = 'feature'
+        print('{:>12}{:>2}'.format(msg, i), end='')
+    print()
+
+
+    # print results
+    for f in fields:
+        print('{:<5}'.format(f), end='')
+        for res in results:
+            print('{:>14.6f}'.format(res[f]), end='')
+        print()
+
+
 
 if __name__ == '__main__':
     main()
