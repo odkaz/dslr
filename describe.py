@@ -65,6 +65,11 @@ def get_stats(feature):
     result['max'] = feature[-1]
     return result
 
+def print_format(title, res):
+    print('{:<5}'.format(title), end='|')
+    print('{:>14.6f}'.format(res), end='')
+    print()
+
 # main
 def main():
     if len(sys.argv) != 2:
@@ -75,18 +80,18 @@ def main():
     data = util.read_data(url)
     titles = data.pop(0)
 
-    for i in range(7, 15):
+    for i in range(7, 19):
         feature = get_nth_feature(data, i)
         result = get_stats(feature)
         print('----', titles[i], '----')
-        print('count', result['count'])
-        print('mean', result['mean'])
-        print('std', result['std'])
-        print('min', result['min'])
-        print('25%', result['25%'])
-        print('50%', result['50%'])
-        print('75%', result['75%'])
-        print('max', result['max'])
+        print_format('count', result['count'])
+        print_format('mean', result['mean'])
+        print_format('std', result['std'])
+        print_format('min', result['min'])
+        print_format('25%', result['25%'])
+        print_format('50%', result['50%'])
+        print_format('75%', result['75%'])
+        print_format('max', result['max'])
         print('--------------')
         # result['']
         # data.sort(key=take_second)
@@ -94,7 +99,6 @@ def main():
         #show answer
         s = pd.Series(feature)
         print(s.describe())
-        # print('--------------')
 
 if __name__ == '__main__':
     main()
