@@ -28,23 +28,39 @@ def sigmoid(z):
     g = 1/ (1 + np.exp(-z))
     return g
 
-# def estimate_price(bias, weight, x):
-#     y =  bias + weight * x
-#     return y
+def compute_gradient_logistic(X, y, w, b): 
+    m,n = X.shape
+    dj_dw = np.zeros((n,))                           #(n,)
+    dj_db = 0.
 
-# def get_bias(bias, weight, milage, price):
-#     m = len(milage)
-#     sum = 0
-#     for i in range(m):
-#         sum += (estimate_price(bias, weight, milage[i]) - price[i])
-#     return sum / m
+    for i in range(m):
+        f_wb_i = sigmoid(np.dot(X[i],w) + b)          #(n,)(n,)=scalar
+        err_i  = f_wb_i  - y[i]                       #scalar
+        for j in range(n):
+            dj_dw[j] = dj_dw[j] + err_i * X[i,j]      #scalar
+        dj_db = dj_db + err_i
+    dj_dw = dj_dw/m                                   #(n,)
+    dj_db = dj_db/m                                   #scalar
 
-# def get_weight(bias, weight, milage, price):
-#     m = len(milage)
-#     sum = 0
-#     for i in range(m):
-#         sum += (estimate_price(bias, weight, milage[i]) - price[i]) * milage[i]
-#     return sum / m
+    return dj_db, dj_dw
+
+def gradient_descent(X, y, w_in=[0., 0.], b_in=0., alpha=1, num_iters=100): 
+    # An array to store cost J and w's at each iteration primarily for graphing later
+    w = w_in  #avoid modifying global w within function
+    b = b_in
+
+    print('w:', w)
+    print('w_in', w_in)
+
+    for i in range(num_iters):
+        # Calculate the gradient and update the parameters
+        dj_db, dj_dw = compute_gradient_logistic(X, y, w, b)   
+
+        # Update Parameters using w, b, alpha and gradient
+        w = w - alpha * dj_dw               
+        b = b - alpha * dj_db               
+        
+    return w, b
 
 def data_normalisation(data):
     low = min(data)
@@ -57,7 +73,7 @@ def data_normalisation(data):
 
 def get_train_data():
     df = pd.read_csv('./datasets/dataset_train.csv', index_col = 'Index')
-    f1 = 'Herbology'
+    f1 = 'Flying'
     # eliminate the row with nan
     df = df.dropna(subset=[f1])
     x_train = data_normalisation(df[f1])
@@ -72,8 +88,6 @@ def get_train_data():
     return np_x, np_y
 
 def plot_data(x_train, y_train):
-    # x_train = np.array(x_train)
-    # y_train = np.array(y_train)
     pos = y_train == 1
     neg = y_train == 0
 
@@ -87,25 +101,28 @@ def plot_data(x_train, y_train):
     plt.scatter(x_train[neg], y_train[neg], marker='o', s=100, label="y=0", c='blue',lw=3)
     plt.show()
 
-# def get_train_data_double():
-#     df = pd.read_csv('./datasets/dataset_train.csv', index_col = 'Index')
-#     f1 = 'Herbology'
-#     f2 = 'Defense Against the Dark Arts'
-#     # eliminate the row with nan
-#     df = df.dropna(subset=[f1, f2])
-#     y_train = []
-#     for index, row in df.iterrows():
-#         if (row['Hogwarts House'] == 'Gryffindor'):
-#             y_train.append(1)
-#         else:
-#             y_train.append(0) 
+def get_train_data_double():
+    df = pd.read_csv('./datasets/dataset_train.csv', index_col = 'Index')
+    f1 = 'Flying'
+    f2 = 'Divination'
+    # eliminate the row with nan
+    df = df.dropna(subset=[f1, f2])
+    y_train = []
+    for index, row in df.iterrows():
+        if (row['Hogwarts House'] == 'Gryffindor'):
+            y_train.append(1)
+        else:
+            y_train.append(0) 
 
-#     df_f1 = data_normalisation(df[f1])
-#     df_f2 = data_normalisation(df[f2])
+    df_f1 = data_normalisation(df[f1])
+    df_f2 = data_normalisation(df[f2])
+    list_of_lists = list(zip(df_f1, df_f2))
+    res_x = np.array(list_of_lists)
+    res_y = np.array(y_train)
 
-#     return df_f1, df_f2, y_train
+    return res_x, res_y
 
-def plot_data_double(X, y, ax, pos_label="y=1", neg_label="y=0", s=80, loc='best' ):
+def plot_data_double(X, y, pos_label="y=1", neg_label="y=0", s=80, loc='best' ):
     """ plots logistic data with two axis """
     # Find Indices of Positive and Negative Examples
     pos = y == 1
@@ -114,20 +131,26 @@ def plot_data_double(X, y, ax, pos_label="y=1", neg_label="y=0", s=80, loc='best
     neg = neg.reshape(-1,)
 
     # Plot examples
-    ax.scatter(X[pos, 0], X[pos, 1], marker='x', s=s, c = 'red', label=pos_label)
-    ax.scatter(X[neg, 0], X[neg, 1], marker='o', s=s, c = 'blue')
-    ax.legend(loc=loc)
+    plt.scatter(X[pos, 0], X[pos, 1], marker='x', s=s, c = 'red', label=pos_label)
+    plt.scatter(X[neg, 0], X[neg, 1], marker='o', s=s, c = 'blue')
+    plt.legend(loc=loc)
 
 def logistic_regression():
-    x_train, y_train = get_train_data()
-    learning_rate = 0.001
-    iterate = 100000
-    theta0, theta1 = 0,0
+    x_train, y_train = get_train_data_double()
+    w_out, b_out = gradient_descent(x_train, y_train)
+    print('w', w_out, 'b', b_out)
+    plot_data_double(x_train, y_train)
 
-    plot_data(x_train, y_train)
-    # plt.scatter(list_of_lists, y_train)
-    # plt.show()
-    return theta0, theta1
+    # y = dot(x, w) + b
+    x0 = -b_out/w_out[0]
+    x1 = -b_out/w_out[1]
+    print('x0', x0, 'x1', x1)
+    
+    plt.plot([0,x0],[x1,0], c='blue', lw=1)
+    width = 0.5
+    plt.axis([-width, 1 + width, -width, 1 + width])
+    plt.show()
+    # return w_out, b_out
 
 def main():
     # pass
