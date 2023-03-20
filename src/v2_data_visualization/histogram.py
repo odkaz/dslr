@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import src.util.util as util
+import v1_data_analysis.util as util
 
 df = pd.read_csv('../../datasets/dataset_train.csv')
 column_names = [

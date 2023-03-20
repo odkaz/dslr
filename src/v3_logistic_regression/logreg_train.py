@@ -45,7 +45,7 @@ def compute_gradient_logistic(X, y, w, b):
 
     return dj_db, dj_dw
 
-def gradient_descent(X, y, w_in=[0., 0.], b_in=0., alpha=1, num_iters=500): 
+def gradient_descent(X, y, w_in=[0., 0.], b_in=0., alpha=1, num_iters=100): 
     # An array to store cost J and w's at each iteration primarily for graphing later
     w = w_in
     b = b_in
@@ -96,9 +96,9 @@ def plot_data(x_train, y_train):
     plt.scatter(x_train[neg], y_train[neg], marker='o', s=100, label="y=0", c='blue',lw=3)
     plt.show()
 
-def get_train_data_double(df, house):
-    f1 = 'Arithmancy'
-    f2 = 'Care of Magical Creatures'
+def get_train_data_double(df, f1, f2, house):
+    # f1 = 'Arithmancy'
+    # f2 = 'Care of Magical Creatures'
     # eliminate the row with nan
     df = df.dropna(subset=[f1, f2])
     y_train = []
@@ -142,16 +142,39 @@ def plot_probability(w_out, b_out):
     title = 'probability = ' + str(probability)
     plt.title(title)
 
-def logistic_regression():
-    df = pd.read_csv('../../datasets/dataset_train.csv', index_col = 'Index')
+def train_by_houses(df, f1, f2):
     res = {}
     for house in house_colors:
-        x_train, y_train = get_train_data_double(df, house)
+        x_train, y_train = get_train_data_double(df, f1, f2, house)
         w_out, b_out = gradient_descent(x_train, y_train)
         tmp = {}
         tmp['w'] = w_out.tolist()
         tmp['b'] = b_out
         res[house] = tmp
+    return res
+
+def output_json(data):
+    # j = json.dumps(data)
+    # print(j)
+    with open('../../reference/trained_data.json', 'w') as f:
+        json.dump(data, f, indent=2)
+
+def logistic_regression():
+    df = pd.read_csv('../../datasets/dataset_train.csv', index_col = 'Index')
+    res = []
+    for i, f1 in enumerate(column_names):
+        for j, f2 in enumerate(column_names):
+            if i >= j:
+                continue
+            print('training...', f1, '-', f2)
+            tmp = {}
+            tmp['keys'] = [f1, f2]
+            tmp['data'] = train_by_houses(df, f1, f2)
+            res.append(tmp)
+    output_json(res)
+
+
+
         # print('house:', house)
         # print('w', w_out, 'b', b_out)
         # plot_probability(w_out, b_out)
@@ -162,11 +185,6 @@ def logistic_regression():
         # plt.legend()
         # plt.show()
 
-    j = json.dumps(res)
-    print(j)
-
-    with open('../../reference/trained_data.json', 'w') as json_file:
-        json.dump(res, json_file)
     # l = json.loads(j)
     # for item in l:
     #     print(l[item])
