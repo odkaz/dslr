@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import json
 
 column_names = [
     'Arithmancy',
@@ -46,11 +47,8 @@ def compute_gradient_logistic(X, y, w, b):
 
 def gradient_descent(X, y, w_in=[0., 0.], b_in=0., alpha=1, num_iters=500): 
     # An array to store cost J and w's at each iteration primarily for graphing later
-    w = w_in  #avoid modifying global w within function
+    w = w_in
     b = b_in
-
-    print('w:', w)
-    print('w_in', w_in)
 
     for i in range(num_iters):
         # Calculate the gradient and update the parameters
@@ -72,10 +70,9 @@ def data_normalisation(data):
     return res
 
 def get_train_data():
-    df = pd.read_csv('./datasets/dataset_train.csv', index_col = 'Index')
+    df = pd.read_csv('../../datasets/dataset_train.csv', index_col = 'Index')
     f1 = 'Flying'
-    # eliminate the row with nan
-    df = df.dropna(subset=[f1])
+    df = df.dropna(subset=[f1]) # eliminate the row with nan
     x_train = data_normalisation(df[f1])
     y_train = []
     for index, row in df.iterrows():
@@ -95,21 +92,18 @@ def plot_data(x_train, y_train):
     print('xtrain', x_train[neg])
     print('ytrain', y_train[pos])
     print('ytrain', y_train[neg])
-    # fig,ax = plt.subplots(1,2,figsize=(8,3))
-    #plot 1, single variable
     plt.scatter(x_train[pos], y_train[pos], marker='x', s=80, c = 'red', label="y=1")
     plt.scatter(x_train[neg], y_train[neg], marker='o', s=100, label="y=0", c='blue',lw=3)
     plt.show()
 
-def get_train_data_double():
-    df = pd.read_csv('./datasets/dataset_train.csv', index_col = 'Index')
-    f1 = 'Flying'
-    f2 = 'Divination'
+def get_train_data_double(df, house):
+    f1 = 'Arithmancy'
+    f2 = 'Care of Magical Creatures'
     # eliminate the row with nan
     df = df.dropna(subset=[f1, f2])
     y_train = []
     for index, row in df.iterrows():
-        if (row['Hogwarts House'] == 'Slytherin'):
+        if (row['Hogwarts House'] == house):
             y_train.append(1)
         else:
             y_train.append(0) 
@@ -134,30 +128,74 @@ def plot_data_double(X, y, pos_label="y=1", neg_label="y=0", s=80):
     plt.scatter(X[pos, 0], X[pos, 1], marker='x', s=s, c = 'red', label=pos_label)
     plt.scatter(X[neg, 0], X[neg, 1], marker='o', s=s, c = 'blue', label=neg_label)
 
-def logistic_regression():
-    x_train, y_train = get_train_data_double()
-    w_out, b_out = gradient_descent(x_train, y_train)
-    print('w', w_out, 'b', b_out)
-
-    plot_data_double(x_train, y_train)
-
+def plot_decision_boundary(w_out, b_out):
     x0 = np.arange(-3, 3)
     x1 = -(x0 * w_out[0] + b_out) / w_out[1]
-
-    print('x0', x0, 'x1', x1)
+    # print('x0', x0, 'x1', x1)
     plt.plot(x0, x1, c='blue', lw=1) # decision boundary: sigmoid(z) = 0.5
 
+def plot_probability(w_out, b_out):
     target = [0.3, 0.8]
     probability = sigmoid(np.dot(target, w_out) + b_out)
     print('probability = ', probability)
     plt.scatter(target[0], target[1], marker='*', c = 'green', label='target') # find if target is in the group or not
-
-    width = 0.5
-    plt.axis([-width, 1 + width, -width, 1 + width])
     title = 'probability = ' + str(probability)
     plt.title(title)
-    plt.legend()
-    plt.show()
+
+def logistic_regression():
+    df = pd.read_csv('../../datasets/dataset_train.csv', index_col = 'Index')
+    res = {}
+    for house in house_colors:
+        x_train, y_train = get_train_data_double(df, house)
+        w_out, b_out = gradient_descent(x_train, y_train)
+        tmp = {}
+        tmp['w'] = w_out.tolist()
+        tmp['b'] = b_out
+        res[house] = tmp
+        # print('house:', house)
+        # print('w', w_out, 'b', b_out)
+        # plot_probability(w_out, b_out)
+
+        # plot_data_double(x_train, y_train)
+        # width = 0.5
+        # plt.axis([-width, 1 + width, -width, 1 + width])
+        # plt.legend()
+        # plt.show()
+
+    j = json.dumps(res)
+    print(j)
+
+    with open('../../reference/trained_data.json', 'w') as json_file:
+        json.dump(res, json_file)
+    # l = json.loads(j)
+    # for item in l:
+    #     print(l[item])
+
+
+
+    # x_train, y_train = get_train_data_double(df)
+    # w_out, b_out = gradient_descent(x_train, y_train)
+    # print('w', w_out, 'b', b_out)
+
+    # plot_data_double(x_train, y_train)
+
+    # x0 = np.arange(-3, 3)
+    # x1 = -(x0 * w_out[0] + b_out) / w_out[1]
+
+    # print('x0', x0, 'x1', x1)
+    # plt.plot(x0, x1, c='blue', lw=1) # decision boundary: sigmoid(z) = 0.5
+
+    # target = [0.3, 0.8]
+    # probability = sigmoid(np.dot(target, w_out) + b_out)
+    # print('probability = ', probability)
+    # plt.scatter(target[0], target[1], marker='*', c = 'green', label='target') # find if target is in the group or not
+
+    # width = 0.5
+    # plt.axis([-width, 1 + width, -width, 1 + width])
+    # title = 'probability = ' + str(probability)
+    # plt.title(title)
+    # plt.legend()
+    # plt.show()
     # return w_out, b_out
 
 def main():
