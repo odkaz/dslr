@@ -44,7 +44,7 @@ def compute_gradient_logistic(X, y, w, b):
 
     return dj_db, dj_dw
 
-def gradient_descent(X, y, w_in=[0., 0.], b_in=0., alpha=1, num_iters=100): 
+def gradient_descent(X, y, w_in=[0., 0.], b_in=0., alpha=1, num_iters=500): 
     # An array to store cost J and w's at each iteration primarily for graphing later
     w = w_in  #avoid modifying global w within function
     b = b_in
@@ -79,7 +79,7 @@ def get_train_data():
     x_train = data_normalisation(df[f1])
     y_train = []
     for index, row in df.iterrows():
-        if (row['Hogwarts House'] == 'Gryffindor'):
+        if (row['Hogwarts House'] == 'Slytherin'):
             y_train.append(1)
         else:
             y_train.append(0) 
@@ -109,7 +109,7 @@ def get_train_data_double():
     df = df.dropna(subset=[f1, f2])
     y_train = []
     for index, row in df.iterrows():
-        if (row['Hogwarts House'] == 'Gryffindor'):
+        if (row['Hogwarts House'] == 'Slytherin'):
             y_train.append(1)
         else:
             y_train.append(0) 
@@ -132,21 +132,27 @@ def plot_data_double(X, y, pos_label="y=1", neg_label="y=0", s=80, loc='best' ):
 
     # Plot examples
     plt.scatter(X[pos, 0], X[pos, 1], marker='x', s=s, c = 'red', label=pos_label)
-    plt.scatter(X[neg, 0], X[neg, 1], marker='o', s=s, c = 'blue')
+    plt.scatter(X[neg, 0], X[neg, 1], marker='o', s=s, c = 'blue', label=neg_label)
     plt.legend(loc=loc)
 
 def logistic_regression():
     x_train, y_train = get_train_data_double()
     w_out, b_out = gradient_descent(x_train, y_train)
     print('w', w_out, 'b', b_out)
+
     plot_data_double(x_train, y_train)
 
-    # y = dot(x, w) + b
-    x0 = -b_out/w_out[0]
-    x1 = -b_out/w_out[1]
+    x0 = np.arange(-3, 3)
+    x1 = -(x0 * w_out[0] + b_out) / w_out[1]
+
     print('x0', x0, 'x1', x1)
-    
-    plt.plot([0,x0],[x1,0], c='blue', lw=1)
+    plt.plot(x0, x1, c='blue', lw=1) # decision boundary: sigmoid(z) = 0.5
+
+    target = [0.3, 0.8]
+    probability = sigmoid(np.dot(target, w_out) + b_out)
+    print('probability = ', probability)
+    plt.scatter(target[0], target[1], marker='*', c = 'green', label='target') # find if target is in the group or not
+
     width = 0.5
     plt.axis([-width, 1 + width, -width, 1 + width])
     plt.show()
