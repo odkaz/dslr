@@ -122,7 +122,7 @@ def get_train_data_double():
 
     return res_x, res_y
 
-def plot_data_double(X, y, pos_label="y=1", neg_label="y=0", s=80, loc='best' ):
+def plot_data_double(X, y, pos_label="y=1", neg_label="y=0", s=80):
     """ plots logistic data with two axis """
     # Find Indices of Positive and Negative Examples
     pos = y == 1
@@ -133,7 +133,6 @@ def plot_data_double(X, y, pos_label="y=1", neg_label="y=0", s=80, loc='best' ):
     # Plot examples
     plt.scatter(X[pos, 0], X[pos, 1], marker='x', s=s, c = 'red', label=pos_label)
     plt.scatter(X[neg, 0], X[neg, 1], marker='o', s=s, c = 'blue', label=neg_label)
-    plt.legend(loc=loc)
 
 def logistic_regression():
     x_train, y_train = get_train_data_double()
@@ -155,6 +154,9 @@ def logistic_regression():
 
     width = 0.5
     plt.axis([-width, 1 + width, -width, 1 + width])
+    title = 'probability = ' + str(probability)
+    plt.title(title)
+    plt.legend()
     plt.show()
     # return w_out, b_out
 

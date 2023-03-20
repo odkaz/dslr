@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import util
+import src.util.util as util
 
-df = pd.read_csv('./datasets/dataset_train.csv')
+df = pd.read_csv('../../datasets/dataset_train.csv')
 column_names = [
     'Arithmancy',
     'Astronomy',

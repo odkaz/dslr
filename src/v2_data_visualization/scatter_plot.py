@@ -23,7 +23,7 @@ house_colors = {
     'Ravenclaw': 'blue'
 }
 
-df = pd.read_csv('./datasets/dataset_train.csv')
+df = pd.read_csv('../../datasets/dataset_train.csv')
 
 figure, axis = plt.subplots(13, 13)
 
@@ -32,9 +32,7 @@ for i in range(0, 13):
         for house in house_colors:
             x = df[df['Hogwarts House'] == house]
             y = df[df['Hogwarts House'] == house]
-            if (i == j):
-                axis[i, j].hist(x[column_names[i]], alpha=0.5, color=house_colors[house], label=house)
-            else:
+            if (i != j):
                 axis[i, j].scatter(y[column_names[j]], x[column_names[i]], alpha=0.5, color=house_colors[house], label=house)
         if (i == 0):
             axis[0, j].set_title(column_names[j], pad=35)
