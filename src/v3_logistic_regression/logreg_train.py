@@ -107,9 +107,10 @@ def get_train_data_double(df, f1, f2, house):
             y_train.append(1)
         else:
             y_train.append(0) 
-
-    df_f1 = data_normalisation(df[f1])
-    df_f2 = data_normalisation(df[f2])
+    df_1 = df[f1]
+    df_1 = df[f2]
+    # df_f1 = data_normalisation(df[f1])
+    # df_f2 = data_normalisation(df[f2])
     list_of_lists = list(zip(df_f1, df_f2))
     res_x = np.array(list_of_lists)
     res_y = np.array(y_train)
@@ -153,6 +154,14 @@ def train_by_houses(df, f1, f2):
         res[house] = tmp
     return res
 
+def normalize_all(df):
+    for key in column_names:
+        col = df.loc[:,key]
+        # calculate the mean and save it in the logreg as well
+        tmp = data_normalisation(col)
+        df[key] = pd.DataFrame(tmp)
+    return df
+
 def output_json(data):
     # j = json.dumps(data)
     # print(j)
@@ -161,17 +170,20 @@ def output_json(data):
 
 def logistic_regression():
     df = pd.read_csv('../../datasets/dataset_train.csv', index_col = 'Index')
+    df = normalize_all(df)
     res = []
-    for i, f1 in enumerate(column_names):
-        for j, f2 in enumerate(column_names):
-            if i >= j:
-                continue
-            print('training...', f1, '-', f2)
-            tmp = {}
-            tmp['keys'] = [f1, f2]
-            tmp['data'] = train_by_houses(df, f1, f2)
-            res.append(tmp)
-    output_json(res)
+    # for i, f1 in enumerate(column_names):
+    #     for j, f2 in enumerate(column_names):
+    #         if i >= j:
+    #             continue
+    #         print('training...', f1, '-', f2)
+    #         tmp = {}
+    #         tmp['keys'] = [f1, f2]
+    #         tmp['data'] = train_by_houses(df, f1, f2)
+    #         res.append(tmp)
+    # output_json(res)
+
+
 
 
 
