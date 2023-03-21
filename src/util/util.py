@@ -1,5 +1,4 @@
 import csv
-# import sys
 
 def read_data(url) -> list:
     data = []

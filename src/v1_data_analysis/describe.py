@@ -1,7 +1,8 @@
 import sys
-import util
 import math
 import pandas as pd
+sys.path.append('../util')
+from util import read_data, show_data
 
 def take_second(elem):
     return elem[1]
@@ -84,11 +85,11 @@ def print_vert(title, res):
 # main
 def main():
     if len(sys.argv) != 2:
-        url = '../../datasets/dataset_test.csv'
+        url = '../../datasets/dataset_train.csv'
     else:
         url = sys.argv[1]
 
-    data = util.read_data(url)
+    data = read_data(url)
     titles = data.pop(0)
     results = []
     for i in range(7, 19):
