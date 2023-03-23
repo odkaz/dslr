@@ -67,7 +67,7 @@ def data_normalisation(data):
     for x in data:
         norm = (x - low) / (high - low)
         res.append(norm)
-    return res
+    return res, low, high
 
 def get_train_data():
     df = pd.read_csv('../../datasets/dataset_train.csv', index_col = 'Index')
@@ -107,11 +107,10 @@ def get_train_data_double(df, f1, f2, house):
             y_train.append(1)
         else:
             y_train.append(0) 
-    df_1 = df[f1]
-    df_1 = df[f2]
     # df_f1 = data_normalisation(df[f1])
     # df_f2 = data_normalisation(df[f2])
-    list_of_lists = list(zip(df_f1, df_f2))
+    # list_of_lists = list(zip(df_f1, df_f2))
+    list_of_lists = list(zip(df[f1], df[f2]))
     res_x = np.array(list_of_lists)
     res_y = np.array(y_train)
 
@@ -155,12 +154,14 @@ def train_by_houses(df, f1, f2):
     return res
 
 def normalize_all(df):
+    scales = {}
     for key in column_names:
         col = df.loc[:,key]
         # calculate the mean and save it in the logreg as well
-        tmp = data_normalisation(col)
+        tmp, low, high = data_normalisation(col)
         df[key] = pd.DataFrame(tmp)
-    return df
+        scales[key] = {'low': low, 'high': high}
+    return df, scales
 
 def output_json(data):
     # j = json.dumps(data)
@@ -168,9 +169,15 @@ def output_json(data):
     with open('../../reference/trained_data.json', 'w') as f:
         json.dump(data, f, indent=2)
 
+def test_print_probability():
+    for house in house_colors:
+        pass
+
+
+
 def logistic_regression():
     df = pd.read_csv('../../datasets/dataset_train.csv', index_col = 'Index')
-    df = normalize_all(df)
+    df, scales = normalize_all(df)
     res = []
     # for i, f1 in enumerate(column_names):
     #     for j, f2 in enumerate(column_names):
@@ -183,7 +190,15 @@ def logistic_regression():
     #         res.append(tmp)
     # output_json(res)
 
-
+    f1 = column_names[4]
+    f2 = column_names[6]
+    house = 'Gryffindor'
+    test_res = train_by_houses(df, f1, f2)
+    plot_probability(test_res[house]['w'], test_res[house]['b'])
+    print('scales', scales)
+    print(test_res)
+    plt.legend()
+    plt.show()
 
 
 
