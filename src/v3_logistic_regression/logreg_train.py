@@ -79,7 +79,7 @@ def get_train_data():
         if (row['Hogwarts House'] == 'Slytherin'):
             y_train.append(1)
         else:
-            y_train.append(0) 
+            y_train.append(0)
     np_x = np.array(x_train)
     np_y = np.array(y_train)
     return np_x, np_y
@@ -163,10 +163,8 @@ def normalize_all(df):
         scales[key] = {'low': low, 'high': high}
     return df, scales
 
-def output_json(data):
-    # j = json.dumps(data)
-    # print(j)
-    with open('../../reference/trained_data.json', 'w') as f:
+def output_json(data, url):
+    with open(url, 'w') as f:
         json.dump(data, f, indent=2)
 
 def test_print_probability():
@@ -178,27 +176,29 @@ def test_print_probability():
 def logistic_regression():
     df = pd.read_csv('../../datasets/dataset_train.csv', index_col = 'Index')
     df, scales = normalize_all(df)
+    output_json(scales, '../../reference/scale.json')
     res = []
-    # for i, f1 in enumerate(column_names):
-    #     for j, f2 in enumerate(column_names):
-    #         if i >= j:
-    #             continue
-    #         print('training...', f1, '-', f2)
-    #         tmp = {}
-    #         tmp['keys'] = [f1, f2]
-    #         tmp['data'] = train_by_houses(df, f1, f2)
-    #         res.append(tmp)
-    # output_json(res)
 
-    f1 = column_names[4]
-    f2 = column_names[6]
-    house = 'Gryffindor'
-    test_res = train_by_houses(df, f1, f2)
-    plot_probability(test_res[house]['w'], test_res[house]['b'])
-    print('scales', scales)
-    print(test_res)
-    plt.legend()
-    plt.show()
+    for i, f1 in enumerate(column_names):
+        for j, f2 in enumerate(column_names):
+            if i >= j:
+                continue
+            print('training...', f1, '-', f2)
+            tmp = {}
+            tmp['keys'] = [f1, f2]
+            tmp['data'] = train_by_houses(df, f1, f2)
+            res.append(tmp)
+    output_json(res, '../../reference/trained_data.json')
+
+    # f1 = column_names[4]
+    # f2 = column_names[6]
+    # house = 'Gryffindor'
+    # test_res = train_by_houses(df, f1, f2)
+    # plot_probability(test_res[house]['w'], test_res[house]['b'])
+    # print('scales', scales)
+    # print(test_res)
+    # plt.legend()
+    # plt.show()
 
 
 
