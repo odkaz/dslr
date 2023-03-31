@@ -79,7 +79,6 @@ def logreg_predict():
     with open('../../reference/scale.json', 'r') as f:
         scale = json.load(f)
     df = normalize_all(df, scale)
-
     # for column_name, item in df.iterrows():
     #     # print(column_name, item)
     #     for key in COLUMN_NAMES:
