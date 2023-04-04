@@ -2,28 +2,31 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import json
+import sys
+sys.path.append('../util')
+from consts import COLUMN_NAMES, HOUSE_COLORS
 
-column_names = [
-    'Arithmancy',
-    'Astronomy',
-    'Herbology',
-    'Defense Against the Dark Arts',
-    'Divination',
-    'Muggle Studies',
-    'Ancient Runes',
-    'History of Magic',
-    'Transfiguration',
-    'Potions',
-    'Care of Magical Creatures',
-    'Charms',
-    'Flying'
-]
-house_colors = {
-    'Gryffindor': 'red',
-    'Hufflepuff': 'yellow',
-    'Slytherin': 'green',
-    'Ravenclaw': 'blue'
-}
+# COLUMN_NAMES = [
+#     'Arithmancy',
+#     'Astronomy',
+#     'Herbology',
+#     'Defense Against the Dark Arts',
+#     'Divination',
+#     'Muggle Studies',
+#     'Ancient Runes',
+#     'History of Magic',
+#     'Transfiguration',
+#     'Potions',
+#     'Care of Magical Creatures',
+#     'Charms',
+#     'Flying'
+# ]
+# HOUSE_COLORS = {
+#     'Gryffindor': 'red',
+#     'Hufflepuff': 'yellow',
+#     'Slytherin': 'green',
+#     'Ravenclaw': 'blue'
+# }
 
 def sigmoid(z):
     g = 1/ (1 + np.exp(-z))
@@ -45,7 +48,7 @@ def compute_gradient_logistic(X, y, w, b):
 
     return dj_db, dj_dw
 
-def gradient_descent(X, y, w_in=[0., 0.], b_in=0., alpha=1, num_iters=100): 
+def gradient_descent(X, y, w_in=[0., 0.], b_in=0., alpha=1, num_iters=500): 
     # An array to store cost J and w's at each iteration primarily for graphing later
     w = w_in
     b = b_in
@@ -144,7 +147,7 @@ def plot_probability(w_out, b_out):
 
 def train_by_houses(df, f1, f2):
     res = {}
-    for house in house_colors:
+    for house in HOUSE_COLORS:
         x_train, y_train = get_train_data_double(df, f1, f2, house)
         w_out, b_out = gradient_descent(x_train, y_train)
         tmp = {}
@@ -155,7 +158,7 @@ def train_by_houses(df, f1, f2):
 
 def normalize_all(df):
     scales = {}
-    for key in column_names:
+    for key in COLUMN_NAMES:
         col = df.loc[:,key]
         # calculate the mean and save it in the logreg as well
         tmp, low, high = data_normalisation(col)
@@ -168,7 +171,7 @@ def output_json(data, url):
         json.dump(data, f, indent=2)
 
 def test_print_probability():
-    for house in house_colors:
+    for house in HOUSE_COLORS:
         pass
 
 
@@ -179,8 +182,8 @@ def logistic_regression():
     output_json(scales, '../../reference/scale.json')
     res = []
 
-    for i, f1 in enumerate(column_names):
-        for j, f2 in enumerate(column_names):
+    for i, f1 in enumerate(COLUMN_NAMES):
+        for j, f2 in enumerate(COLUMN_NAMES):
             if i >= j:
                 continue
             print('training...', f1, '-', f2)
@@ -190,8 +193,8 @@ def logistic_regression():
             res.append(tmp)
     output_json(res, '../../reference/trained_data.json')
 
-    # f1 = column_names[4]
-    # f2 = column_names[6]
+    # f1 = COLUMN_NAMES[4]
+    # f2 = COLUMN_NAMES[6]
     # house = 'Gryffindor'
     # test_res = train_by_houses(df, f1, f2)
     # plot_probability(test_res[house]['w'], test_res[house]['b'])

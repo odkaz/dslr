@@ -74,11 +74,27 @@ def output_csv(result):
     tmp.to_csv('../../reference/houses.csv', index=True, index_label='Index')
 
 
+DROP_NAMES = [
+    'Arithmancy',
+    'Astronomy',
+    'Herbology',
+    'Defense Against the Dark Arts',
+    'Divination',
+    'Muggle Studies',
+    'Ancient Runes',
+    'History of Magic',
+    'Transfiguration',
+    'Potions',
+    'Care of Magical Creatures',
+    'Charms',
+    'Flying'
+]
+
 def logreg_predict():
     df = pd.read_csv('../../datasets/dataset_test.csv', index_col = 'Index')
     with open('../../reference/scale.json', 'r') as f:
         scale = json.load(f)
-    df = normalize_all(df, scale)
+    df = normalize_all(df, scale).dropna(subset = DROP_NAMES)
     # for column_name, item in df.iterrows():
     #     # print(column_name, item)
     #     for key in COLUMN_NAMES:

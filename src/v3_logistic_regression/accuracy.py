@@ -4,6 +4,26 @@ from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 from sklearn.impute import SimpleImputer
 import pandas as pd
+import sys
+sys.path.append('../util')
+from consts import COLUMN_NAMES, HOUSE_COLORS
+
+
+NAMES = [
+    'Arithmancy',
+    'Astronomy',
+    'Herbology',
+    'Defense Against the Dark Arts',
+    'Divination',
+    'Muggle Studies',
+    'Ancient Runes',
+    'History of Magic',
+    'Transfiguration',
+    'Potions',
+    'Care of Magical Creatures',
+    'Charms',
+    'Flying'
+]
 
 # X = np.array([
 #     [10, 10],
@@ -15,14 +35,11 @@ import pandas as pd
 # ])
 # y = np.array([0, 0, 1, 1, 2, 2])
 # clf = OneVsRestClassifier(SVC()).fit(X, y)
-# clf.predict([[-19, -20], [9, 9], [-5, 5]])
+# clf.predict([[-19, -20], [9, 9], [-5, 5]])#
 # print(clf)
 
 def train():
-    df = pd.read_csv('../../datasets/dataset_train.csv', index_col = 'Index')
-    # print(df)
-
-    # df = df.dropna()
+    df = pd.read_csv('../../datasets/dataset_train.csv', index_col = 'Index').dropna(subset = NAMES)
     x_train = df.iloc[:, 5:18]
     # print(x_train)
     y_train = df['Hogwarts House']
@@ -33,23 +50,39 @@ def train():
 
 def predict(clf):
     df = pd.read_csv('../../datasets/dataset_test.csv', index_col = 'Index')
-    x_test = df.iloc[:, 5:18]
+    x_test = df.iloc[:, 5:18].dropna(subset = NAMES)
     # x_test = df.iloc[:, 5:18].dropna()
-    imp = SimpleImputer(missing_values=np.nan, strategy='mean')
-    imp.fit(x_test)
-    x_test = imp.trainsform(x_test)
+    # imp = SimpleImputer(missing_values=np.nan, strategy='mean')
+    # imp.fit(x_test)
+    # x_test = imp.transform(x_test)
     return clf.predict(x_test)
 
+def output_csv(result):
+    print(result)
+    tmp = pd.DataFrame(result)
+    # tmp = pd.DataFrame(result, columns = ['Hogwart House', 'Sklearn'])
+    tmp.to_csv('../../reference/comp.csv', index=True, index_label='Index')
+
+def comp_res(prediction):
+    # df = pd.read_csv('../../datasets/dataset_test.csv', index_col = 'Index')
+    y_pred = pd.read_csv('../../reference/houses.csv', index_col = 'Index')
+    y_pred['answer'] = prediction
+    # print(y_pred)
+    output_csv(y_pred)
+
+
 def calc_accuracy(y_true):
-    y_pred = pd.read_csv('../../datasets/houses.csv', index_col = 'Index')
-    accuracy_score(y_true, y_pred)
+    y_pred = pd.read_csv('../../reference/houses.csv', index_col = 'Index')
+    return accuracy_score(y_true, y_pred)
 
 
 def main():
     clf = train()
     prediction = predict(clf)
-    calc_accuracy(prediction)
-    
+    # print(prediction)
+    comp_res(prediction)
+    accuracy = calc_accuracy(prediction)
+    print(accuracy)
 
 if __name__ == '__main__':
     main()
