@@ -6,29 +6,11 @@ from math import isnan
 import sys
 sys.path.append('../util')
 from consts import COLUMN_NAMES, HOUSE_COLORS
+from util import normalize_predict, normalize_train, scatter_plot, scatter_plot_student
 
 def sigmoid(z):
     g = 1/ (1 + np.exp(-z))
     return g
-
-def data_normalisation(data, scale):
-    low = scale['low']
-    high = scale['high']
-    res = []
-    for x in data:
-        norm = (x - low) / (high - low)
-        res.append(norm)
-    return res
-
-def normalize_all(df, scale):
-    for key in COLUMN_NAMES:
-        col = df.loc[:,key]
-        s = scale[key]
-        # calculate the mean and save it in the logreg as well
-        tmp = data_normalisation(col, s)
-        df[key] = pd.DataFrame(tmp)
-        # scales[key] = {'low': low, 'high': high}
-    return df
 
 def get_probability(w_out, b_out, target):
     target = np.squeeze(target)
@@ -94,7 +76,7 @@ def logreg_predict():
     df = pd.read_csv('../../datasets/dataset_test.csv', index_col = 'Index')
     with open('../../reference/scale.json', 'r') as f:
         scale = json.load(f)
-    df = normalize_all(df, scale).dropna(subset = DROP_NAMES)
+    df = normalize_predict(df, scale).dropna(subset = DROP_NAMES)
     # for column_name, item in df.iterrows():
     #     # print(column_name, item)
     #     for key in COLUMN_NAMES:
@@ -103,13 +85,26 @@ def logreg_predict():
     with open('../../reference/trained_data.json', 'r') as f:
         data = json.load(f)
 
+# this is test code
+    test_df = pd.read_csv('../../datasets/dataset_train.csv', index_col = 'Index')
+    test_df, scales = normalize_train(test_df)
+    axis = scatter_plot(test_df)
+
+
+
     res = []
     for index, student in df.iterrows():
         res.append(predict_by_students(df, data, student))
+        if (index == 2):
+            print(student)
+            scatter_plot_student(axis, student)
+            for item in COLUMN_NAMES:
+                print(item, student[item])
         # print('he is :', res)
     output_csv(res)
     # tmp = pd.DataFrame(res, columns = ['Hogwart House'])
     # print(tmp)
+    plt.show()
 
 
 

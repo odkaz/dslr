@@ -4,29 +4,8 @@ import matplotlib.pyplot as plt
 import json
 import sys
 sys.path.append('../util')
-from consts import COLUMN_NAMES, HOUSE_COLORS
-
-# COLUMN_NAMES = [
-#     'Arithmancy',
-#     'Astronomy',
-#     'Herbology',
-#     'Defense Against the Dark Arts',
-#     'Divination',
-#     'Muggle Studies',
-#     'Ancient Runes',
-#     'History of Magic',
-#     'Transfiguration',
-#     'Potions',
-#     'Care of Magical Creatures',
-#     'Charms',
-#     'Flying'
-# ]
-# HOUSE_COLORS = {
-#     'Gryffindor': 'red',
-#     'Hufflepuff': 'yellow',
-#     'Slytherin': 'green',
-#     'Ravenclaw': 'blue'
-# }
+from consts import COLUMN_NAMES, TRAIN_COLUMNS, HOUSE_COLORS
+from util import scatter_plot, normalize_train
 
 def sigmoid(z):
     g = 1/ (1 + np.exp(-z))
@@ -63,14 +42,7 @@ def gradient_descent(X, y, w_in=[0., 0.], b_in=0., alpha=1, num_iters=500):
         
     return w, b
 
-def data_normalisation(data):
-    low = min(data)
-    high = max(data)
-    res = []
-    for x in data:
-        norm = (x - low) / (high - low)
-        res.append(norm)
-    return res, low, high
+
 
 def get_train_data():
     df = pd.read_csv('../../datasets/dataset_train.csv', index_col = 'Index')
@@ -134,7 +106,6 @@ def plot_data_double(X, y, pos_label="y=1", neg_label="y=0", s=80):
 def plot_decision_boundary(w_out, b_out):
     x0 = np.arange(-3, 3)
     x1 = -(x0 * w_out[0] + b_out) / w_out[1]
-    # print('x0', x0, 'x1', x1)
     plt.plot(x0, x1, c='blue', lw=1) # decision boundary: sigmoid(z) = 0.5
 
 def plot_probability(w_out, b_out):
@@ -156,29 +127,16 @@ def train_by_houses(df, f1, f2):
         res[house] = tmp
     return res
 
-def normalize_all(df):
-    scales = {}
-    for key in COLUMN_NAMES:
-        col = df.loc[:,key]
-        # calculate the mean and save it in the logreg as well
-        tmp, low, high = data_normalisation(col)
-        df[key] = pd.DataFrame(tmp)
-        scales[key] = {'low': low, 'high': high}
-    return df, scales
-
 def output_json(data, url):
     with open(url, 'w') as f:
         json.dump(data, f, indent=2)
 
-def test_print_probability():
-    for house in HOUSE_COLORS:
-        pass
-
-
-
 def logistic_regression():
     df = pd.read_csv('../../datasets/dataset_train.csv', index_col = 'Index')
-    df, scales = normalize_all(df)
+    df, scales = normalize_train(df)
+    axis = scatter_plot(df)
+
+
     output_json(scales, '../../reference/scale.json')
     res = []
 
