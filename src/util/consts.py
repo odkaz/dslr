@@ -1,17 +1,33 @@
 COLUMN_NAMES = [
-    'Arithmancy',
+    # 'Arithmancy',
     'Astronomy',
     'Herbology',
-    'Defense Against the Dark Arts',
+#     'Defense Against the Dark Arts',
     'Divination',
-    'Muggle Studies',
+#     'Muggle Studies',
     'Ancient Runes',
-    'History of Magic',
-    'Transfiguration',
-    'Potions',
-    'Care of Magical Creatures',
+#     'History of Magic',
+#     'Transfiguration',
+#     'Potions',
+#     'Care of Magical Creatures',
     'Charms',
-    'Flying'
+#     'Flying'
+]
+
+TRAIN_COLUMNS = [
+    # 'Arithmancy',
+    'Astronomy',
+    'Herbology',
+#     'Defense Against the Dark Arts',
+#     'Divination',
+#     'Muggle Studies',
+    'Ancient Runes',
+#     'History of Magic',
+#     'Transfiguration',
+#     'Potions',
+#     'Care of Magical Creatures',
+#     'Charms',
+#     'Flying'
 ]
 
 HOUSE_COLORS = {

@@ -77,10 +77,13 @@ def logreg_predict():
     with open('../../reference/scale.json', 'r') as f:
         scale = json.load(f)
     df = normalize_predict(df, scale).dropna(subset = DROP_NAMES)
+    print(type(df))
+    df = df.reset_index(drop=True)
     # for column_name, item in df.iterrows():
     #     # print(column_name, item)
     #     for key in COLUMN_NAMES:
     #         print(item[key])
+
 
     with open('../../reference/trained_data.json', 'r') as f:
         data = json.load(f)
@@ -90,17 +93,16 @@ def logreg_predict():
     test_df, scales = normalize_train(test_df)
     axis = scatter_plot(test_df)
 
-
-
     res = []
     for index, student in df.iterrows():
         res.append(predict_by_students(df, data, student))
-        if (index == 2):
+        # print(index)
+        if (index == 299):
             print(student)
             scatter_plot_student(axis, student)
             for item in COLUMN_NAMES:
                 print(item, student[item])
-        # print('he is :', res)
+            print('he is :', res[-1])
     output_csv(res)
     # tmp = pd.DataFrame(res, columns = ['Hogwart House'])
     # print(tmp)
