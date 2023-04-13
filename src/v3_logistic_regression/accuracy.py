@@ -43,8 +43,6 @@ def train():
     df = pd.read_csv('../../datasets/dataset_train.csv', index_col = 'Index').dropna(subset = NAMES)
     # x_train = df.iloc[:, 5:18]
     x_train = df[COLUMN_NAMES]
-    print('this is x_train')
-    print(df[COLUMN_NAMES])
     y_train = df['Hogwarts House']
     clf = OneVsRestClassifier(SVC()).fit(x_train, y_train)
     return clf
@@ -52,15 +50,8 @@ def train():
 
 def predict(clf):
     df = pd.read_csv('../../datasets/dataset_test.csv', index_col = 'Index')
-    print('before')
-    print(df)
     df = df.dropna(subset = NAMES)
-    print('this is df')
-    print(df)
     x_test = df[COLUMN_NAMES]
-    print('this is x_test')
-    print(x_test)
-    # x_test = df.iloc[:, 5:18].dropna(subset = NAMES)
     return clf.predict(x_test)
 
 def output_csv(result):
@@ -71,9 +62,7 @@ def comp_res(prediction):
     y_pred = pd.read_csv('../../reference/houses.csv', index_col = 'Index')
     prediction = pd.DataFrame(prediction, columns=['Hogwart House'])
     diff = y_pred.compare(prediction)
-    print(prediction)
     y_pred['answer'] = prediction
-    output_csv(y_pred)
     diff.to_csv('../../reference/diff.csv')
 
 def calc_accuracy(y_true):

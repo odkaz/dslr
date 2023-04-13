@@ -55,36 +55,12 @@ def output_csv(result):
     tmp = pd.DataFrame(result, columns = ['Hogwart House'])
     tmp.to_csv('../../reference/houses.csv', index=True, index_label='Index')
 
-
-DROP_NAMES = [
-    'Arithmancy',
-    'Astronomy',
-    'Herbology',
-    'Defense Against the Dark Arts',
-    'Divination',
-    'Muggle Studies',
-    'Ancient Runes',
-    'History of Magic',
-    'Transfiguration',
-    'Potions',
-    'Care of Magical Creatures',
-    'Charms',
-    'Flying'
-]
-
 def logreg_predict():
     df = pd.read_csv('../../datasets/dataset_test.csv', index_col = 'Index')
     with open('../../reference/scale.json', 'r') as f:
         scale = json.load(f)
-    df = normalize_predict(df, scale).dropna(subset = DROP_NAMES)
-    print(type(df))
+    df = normalize_predict(df, scale).dropna(subset = COLUMN_NAMES)
     df = df.reset_index(drop=True)
-    # for column_name, item in df.iterrows():
-    #     # print(column_name, item)
-    #     for key in COLUMN_NAMES:
-    #         print(item[key])
-
-
     with open('../../reference/trained_data.json', 'r') as f:
         data = json.load(f)
 
@@ -95,17 +71,14 @@ def logreg_predict():
 
     res = []
     for index, student in df.iterrows():
-        res.append(predict_by_students(df, data, student))
-        # print(index)
-        if (index == 299):
+        # res.append(predict_by_students(df, data, student))
+        if (index == 9):
             print(student)
             scatter_plot_student(axis, student)
             for item in COLUMN_NAMES:
                 print(item, student[item])
-            print('he is :', res[-1])
+            # print('he is :', res[-1])
     output_csv(res)
-    # tmp = pd.DataFrame(res, columns = ['Hogwart House'])
-    # print(tmp)
     plt.show()
 
 

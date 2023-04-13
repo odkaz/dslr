@@ -19,9 +19,18 @@ def show_data(data) -> None:
             print('{:>25}'.format(item[:MAX_WIDTH]), end='')
         print()
 
+def output_csv(result):
+    tmp = pd.DataFrame(result, columns = ['Hogwart House'])
+    tmp.to_csv('../../reference/houses.csv', index=True, index_label='Index')
+
 def output_json(data, url):
     with open(url, 'w') as f:
         json.dump(data, f, indent=2)
+
+def read_json(url):
+    with open(url, 'r') as f:
+        data = json.load(f)
+    return data
 
 def train_normalisation(data):
     low = min(data)
