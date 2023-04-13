@@ -5,7 +5,7 @@ import json
 import sys
 sys.path.append('../util')
 from consts import COLUMN_NAMES, TRAIN_COLUMNS, HOUSE_COLORS
-from util import scatter_plot, normalize_train
+from util import normalize_train, output_json
 
 # util
 
@@ -25,14 +25,11 @@ from util import scatter_plot, normalize_train
 def get_train_data(df, house):
     df = df.dropna(subset=COLUMN_NAMES)
     tmp_y = []
+
     for index, row in df.iterrows():
-        if (row['Hogwarts House'] == house):
-            tmp_y.append(1)
-        else:
-            tmp_y.append(0)
+        tmp_y.append(int(row['Hogwarts House'] == house))
     x_train = df[COLUMN_NAMES].to_numpy()
     y_train = np.array(tmp_y)
-
     return x_train, y_train
 
 def sigmoid(z):
@@ -73,21 +70,19 @@ def gradient_descent(X, y, alpha=1, num_iters=500):
 
 def train_by_houses(df):
     res = {}
+
     for house in HOUSE_COLORS:
         x_train, y_train = get_train_data(df, house)
         w_out, b_out = gradient_descent(x_train, y_train)
-        print(w_out)
-        print(b_out)
-        # tmp = {}
-        # tmp['w'] = w_out.tolist()
-        # tmp['b'] = b_out
-        # res[house] = tmp
+        res[house] = {'w': w_out.tolist(), 'b': b_out}
     return res
 
 def logistic_regression():
     df = pd.read_csv('../../datasets/dataset_train.csv', index_col = 'Index')
     df, scales = normalize_train(df)
     res = train_by_houses(df)
+    output_json(res, '../../reference/trained_data.json')
+    output_json(scales, '../../reference/scale.json')
 
 def test():
     pass

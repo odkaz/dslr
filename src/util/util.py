@@ -1,6 +1,7 @@
 import csv
 import matplotlib.pyplot as plt
 import pandas as pd
+import json
 from consts import COLUMN_NAMES, TRAIN_COLUMNS, HOUSE_COLORS
 
 def read_data(url) -> list:
@@ -17,6 +18,10 @@ def show_data(data) -> None:
         for item in row:
             print('{:>25}'.format(item[:MAX_WIDTH]), end='')
         print()
+
+def output_json(data, url):
+    with open(url, 'w') as f:
+        json.dump(data, f, indent=2)
 
 def train_normalisation(data):
     low = min(data)
