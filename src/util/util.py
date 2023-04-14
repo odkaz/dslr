@@ -90,3 +90,21 @@ def scatter_plot_student(axis, student):
         for j in range(len(COLUMN_NAMES)):
             if (i != j):
                 axis[i, j].scatter(student[COLUMN_NAMES[j]], student[COLUMN_NAMES[i]], alpha=1, color='purple', label='target')
+
+
+
+# this is test code
+def show_student():
+    df = pd.read_csv('../../datasets/dataset_test.csv', index_col = 'Index')
+    with open('../../reference/scale.json', 'r') as f:
+        scale = json.load(f)
+    df = normalize_predict(df, scale)
+    df_train = pd.read_csv('../../datasets/dataset_train.csv', index_col = 'Index')
+    df_train, scales = normalize_train(df_train)
+    axis = scatter_plot(df_train)
+
+    for index, student in df.iterrows():
+        if (index == 21):
+            print(student)
+            scatter_plot_student(axis, student)
+    plt.show()

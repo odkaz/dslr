@@ -18,10 +18,6 @@ from util import normalize_train, output_json
 
 # end util
 
-
-
-
-
 def get_train_data(df, house):
     df = df.dropna(subset=COLUMN_NAMES)
     tmp_y = []

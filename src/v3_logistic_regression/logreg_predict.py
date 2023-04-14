@@ -64,22 +64,7 @@ def logreg_predict():
     with open('../../reference/trained_data.json', 'r') as f:
         data = json.load(f)
 
-# this is test code
-    test_df = pd.read_csv('../../datasets/dataset_train.csv', index_col = 'Index')
-    test_df, scales = normalize_train(test_df)
-    axis = scatter_plot(test_df)
 
-    res = []
-    for index, student in df.iterrows():
-        # res.append(predict_by_students(df, data, student))
-        if (index == 9):
-            print(student)
-            scatter_plot_student(axis, student)
-            for item in COLUMN_NAMES:
-                print(item, student[item])
-            # print('he is :', res[-1])
-    output_csv(res)
-    plt.show()
 
 
 
