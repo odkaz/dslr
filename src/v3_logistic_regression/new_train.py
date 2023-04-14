@@ -4,19 +4,8 @@ import matplotlib.pyplot as plt
 import json
 import sys
 sys.path.append('../util')
-from consts import COLUMN_NAMES, TRAIN_COLUMNS, HOUSE_COLORS
+from consts import COLUMN_NAMES, HOUSE_COLORS
 from util import normalize_train, output_json
-
-# util
-
-
-
-
-
-
-
-
-# end util
 
 def get_train_data(df, house):
     df = df.dropna(subset=COLUMN_NAMES)
@@ -80,11 +69,7 @@ def logistic_regression():
     output_json(res, '../../reference/trained_data.json')
     output_json(scales, '../../reference/scale.json')
 
-def test():
-    pass
-
 def main():
-    # test()
     logistic_regression()
 
 if __name__ == '__main__':

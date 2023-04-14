@@ -2,7 +2,7 @@ import csv
 import matplotlib.pyplot as plt
 import pandas as pd
 import json
-from consts import COLUMN_NAMES, TRAIN_COLUMNS, HOUSE_COLORS
+from consts import COLUMN_NAMES, HOUSE_COLORS
 
 def read_data(url) -> list:
     data = []
@@ -94,7 +94,7 @@ def scatter_plot_student(axis, student):
 
 
 # this is test code
-def show_student():
+def show_student(student_id):
     df = pd.read_csv('../../datasets/dataset_test.csv', index_col = 'Index')
     with open('../../reference/scale.json', 'r') as f:
         scale = json.load(f)
@@ -104,7 +104,7 @@ def show_student():
     axis = scatter_plot(df_train)
 
     for index, student in df.iterrows():
-        if (index == 21):
+        if (index == student_id):
             print(student)
             scatter_plot_student(axis, student)
     plt.show()

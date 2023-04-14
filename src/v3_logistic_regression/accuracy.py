@@ -61,7 +61,7 @@ def main():
     comp_res(prediction)
     accuracy = calc_accuracy(prediction)
     print(accuracy)
-    show_student()
+    show_student(181)
 
 if __name__ == '__main__':
     main()
