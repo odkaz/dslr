@@ -20,3 +20,11 @@ HOUSE_COLORS = {
     'Slytherin': 'green',
     'Ravenclaw': 'blue'
 }
+
+# mandatory
+LEARNING_RATE = 1
+NUM_ITER = 300
+THRESHOLD_COST = 0.07
+
+#bonus
+BATCH_SIZE = 32

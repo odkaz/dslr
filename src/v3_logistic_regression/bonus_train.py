@@ -2,11 +2,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import json
+import time
 import sys
 sys.path.append('../util')
-from consts import COLUMN_NAMES, HOUSE_COLORS
-from util import normalize_train, output_json
-
+from consts import COLUMN_NAMES, HOUSE_COLORS, LEARNING_RATE, NUM_ITER, BATCH_SIZE, THRESHOLD_COST
+from util import normalize_train, output_json, compute_cost_logistic
 
 def get_train_data(df, house):
     df = df.dropna(subset=COLUMN_NAMES)
@@ -37,42 +37,27 @@ def compute_gradient_logistic(X, y, w, b):
     return dj_dw, dj_db
 
 
-def stochastic_gradient_descent(X, y, alpha=1, epochs=125, batch_size=4):
+def stochastic_gradient_descent(X, y, alpha=LEARNING_RATE, epochs=NUM_ITER, batch_size=BATCH_SIZE):
     n_samples, n_features = X.shape
     w = np.zeros(n_features)
     b = 0.
-    
+
     for epoch in range(epochs):
         indices = np.random.permutation(n_samples)
-        X = X[indices]
-        y = y[indices]
+        X_train = X[indices]
+        y_train = y[indices]
 
         for i in range(0, n_samples, batch_size):
-            X_batch = X[i:i+batch_size]
-            y_batch = y[i:i+batch_size]
+            X_batch = X_train[i:i+batch_size]
+            y_batch = y_train[i:i+batch_size]
 
             dj_dw, dj_db = compute_gradient_logistic(X_batch, y_batch, w, b)
             w = w - alpha * dj_dw
             b = b - alpha * dj_db
-    print(w, b)
+        cost = compute_cost_logistic(X, y, w, b)
+        if (cost < 0.07):
+            break
     return w, b
-
-# def predict(X, y, coef):
-#     output = np.dot(X, coef[1:]) + coef[0]
-#     return np.where(output >= 0.0, 1, 0)
-
-# def fit(X, y, num_iter=100, alpha=0.01):
-#     rgen = np.random.RandomState(1)
-#     coef = rgen.normal(loc=0.0, scale=0.01, size=1 + X.shape[1])
-#     for _ in range(num_iter):
-#         for xi, expected_value in zip(X, y):
-#             predicted_value = predict(xi, target, coef_)
-#             coef_[1:] += alpha * (expected_value - predicted_value) * xi
-#             coef_[0] += alpha * (expected_value - predicted_value) * 1
-#     return coef_
-
-# def my_stochastic_gradient_descent(X, y, alpha=0.01, epochs=3, batch_size=4):
-#     return fit(X, y)
 
 def train_by_houses(df):
     res = {}
@@ -83,19 +68,14 @@ def train_by_houses(df):
         res[house] = {'w': w_out.tolist(), 'b': b_out}
     return res
 
-def test():
-    X = np.array([9, 8, 7, 6, 5, 4, 3, 2, 1, 0])
-    t = np.random.permutation(10)
-    print(X[t])
-    print(t)
-
 def main():
+    s_time = time.time()
     df = pd.read_csv('../../datasets/dataset_train.csv', index_col = 'Index')
     df, scales = normalize_train(df)
     res = train_by_houses(df)
     output_json(res, '../../reference/bonus_train.json')
     output_json(scales, '../../reference/bonus_scale.json')
-
+    print('training finished in ', time.time() - s_time, 'seconds')
 
 if __name__ == '__main__':
     main()

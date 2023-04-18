@@ -36,8 +36,7 @@ def predict(clf):
     df = pd.read_csv('../../datasets/dataset_test.csv', index_col = 'Index')
     for col in COLUMN_NAMES:
         df[col].fillna(df[col].mean(), inplace = True)
-    x_test = df[SELECT_NAMES].to_numpy()
-    print(x_test)
+    x_test = df[SELECT_NAMES]
     return clf.predict(x_test)
 
 def output_csv(result):
@@ -61,7 +60,7 @@ def main():
     comp_res(prediction)
     accuracy = calc_accuracy(prediction)
     print(accuracy)
-    show_student(181)
+    # show_student(181)
 
 if __name__ == '__main__':
     main()

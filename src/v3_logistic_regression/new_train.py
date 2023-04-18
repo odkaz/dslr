@@ -2,10 +2,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import json
+import time
 import sys
 sys.path.append('../util')
-from consts import COLUMN_NAMES, HOUSE_COLORS
-from util import normalize_train, output_json
+from consts import COLUMN_NAMES, HOUSE_COLORS, LEARNING_RATE, NUM_ITER
+from util import normalize_train, output_json, compute_cost_logistic
 
 def get_train_data(df, house):
     df = df.dropna(subset=COLUMN_NAMES)
@@ -37,7 +38,7 @@ def compute_gradient_logistic(X, y, w, b):
 
     return dj_db, dj_dw
 
-def gradient_descent(X, y, alpha=1, num_iters=500): 
+def gradient_descent(X, y, alpha=LEARNING_RATE, num_iters=NUM_ITER): 
     # An array to store cost J and w's at each iteration primarily for graphing later
     m, n = X.shape
     w = np.zeros((n,))
@@ -50,7 +51,9 @@ def gradient_descent(X, y, alpha=1, num_iters=500):
         # Update Parameters using w, b, alpha and gradient
         w = w - alpha * dj_dw
         b = b - alpha * dj_db
-
+        cost = compute_cost_logistic(X, y, w, b)
+        if (cost < 0.07):
+            break
     return w, b
 
 def train_by_houses(df):
@@ -70,7 +73,9 @@ def logistic_regression():
     output_json(scales, '../../reference/scale.json')
 
 def main():
+    s_time = time.time()
     logistic_regression()
+    print('training finished in ', time.time() - s_time, 'seconds')
 
 if __name__ == '__main__':
     main()
