@@ -20,9 +20,9 @@ def show_data(data) -> None:
             print('{:>25}'.format(item[:MAX_WIDTH]), end='')
         print()
 
-def output_csv(result):
+def output_csv(result, url):
     tmp = pd.DataFrame(result, columns = ['Hogwart House'])
-    tmp.to_csv('../../reference/houses.csv', index=True, index_label='Index')
+    tmp.to_csv(url , index=True, index_label='Index')
 
 def output_json(data, url):
     with open(url, 'w') as f:

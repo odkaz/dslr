@@ -31,22 +31,14 @@ def predict_by_students(df, data):
 
 def predict():
     df = pd.read_csv('../../datasets/dataset_test.csv', index_col = 'Index')
-    scale = read_json('../../reference/scale.json')
-    data = read_json('../../reference/trained_data.json')
+    scale = read_json('../../reference/bonus_scale.json')
+    data = read_json('../../reference/bonus_train.json')
 
-    # df['Arithmancy'].fillna(df['Arithmancy'].mean(), inplace = True)
-    print(df.isnull().sum())
     for col in COLUMN_NAMES:
         df[col].fillna(df[col].mean(), inplace = True)
-    print(df.isnull().sum())
-        
-    # df = df[COLUMN_NAMES].to_numpy()
-    # df = np.nan_to_num(df)
     df = normalize_predict(df, scale)
-    # df = df.dropna(subset = COLUMN_NAMES)
-    # df = df.reset_index(drop=True)
     res = predict_by_students(df, data)
-    output_csv(res)
+    output_csv(res, '../../reference/bonus_houses.csv')
 
 def main():
     predict()
