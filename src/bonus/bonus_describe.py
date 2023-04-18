@@ -44,12 +44,23 @@ def get_percentile(data, percent, key=lambda x:x):
     d1 = key(data[int(c)]) * (k - f)
     return d0 + d1
 
+def is_float(s):
+    try:
+        float(s)
+        return True
+    except:
+        return False
+
 def get_nth_feature(data, i):
     feature = []
     for row in data:
         elem = get_nth_element(row, i)
-        if elem != '':
+        if elem == '':
+            continue
+        if (is_float(elem)):
             feature.append(float(elem))
+        else:
+            feature.append(elem)
     return feature
 
 def get_stats(feature):
@@ -74,6 +85,8 @@ fields = ['count', 'mean', 'std', 'min', '25%', '50%', '75%', 'max']
 
 # main
 def main():
+    df = pd.read_csv('../../datasets/dataset_train.csv', index_col = 'Index')
+    print(df.describe(include='all'))
     if len(sys.argv) != 2:
         url = '../../datasets/dataset_train.csv'
     else:
@@ -82,7 +95,7 @@ def main():
     data = read_data(url)
     titles = data.pop(0)
     results = []
-    for i in range(6, 19):
+    for i, t in enumerate(titles):
         feature = get_nth_feature(data, i)
         res = get_stats(feature)
         results.append(res)
