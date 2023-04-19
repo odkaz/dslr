@@ -97,7 +97,10 @@ def main():
     for f in fields:
         print('{:<5}'.format(f), end='')
         for res in results:
-            print('{:>14.6f}'.format(res[f]), end='')
+            if type(res[f]) is int:
+                print('{:>14}'.format(res[f]), end='')
+            elif type(res[f]) is float:
+                print('{:>14.6f}'.format(res[f]), end='')
         print()
 
 if __name__ == '__main__':
