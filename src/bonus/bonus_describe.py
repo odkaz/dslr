@@ -11,6 +11,30 @@ def take_second(elem):
 def get_nth_element(data, n):
     return data[n]
 
+def is_unique(item, data):
+    if (data.count(item) == 1):
+        return True
+    else:
+        return False
+
+def get_unique(data):
+    count = 0
+    for item in data:
+        if (is_unique(item, data)):
+            count += 1
+    return count
+
+def get_top(data):
+    top = data[0]
+    for item in data:
+        count = data.count(item)
+        if (count > data.count(top)):
+            top = item
+    return top
+
+def get_frequency(data):
+    return data.count(get_top(data))
+
 def get_sum(data):
     sum = 0.0
     for val in data:
@@ -67,6 +91,9 @@ def get_stats(feature):
     result = {}
     feature.sort()
     result['count'] = len(feature)
+    result['unique'] = None
+    result['top'] = None
+    result['freq'] = None
     result['mean'] = get_mean(feature)
     result['std'] = get_std(feature)
     result['min'] = feature[0]
@@ -76,12 +103,27 @@ def get_stats(feature):
     result['max'] = feature[-1]
     return result
 
+def get_stats_categorical(feature):
+    result = {}
+    result['count'] = len(feature)
+    result['unique'] = get_unique(feature)
+    result['top'] = get_top(feature)
+    result['freq'] = get_frequency(feature)
+    result['mean'] = None
+    result['std'] = None
+    result['min'] = None
+    result['25%'] = None
+    result['50%'] = None
+    result['75%'] = None
+    result['max'] = None
+    return result
+
 def print_format(title, res):
     print('{:<5}'.format(title), end='|')
     print('{:>14.6f}'.format(res), end='')
     print()
 
-fields = ['count', 'mean', 'std', 'min', '25%', '50%', '75%', 'max']
+fields = ['count', 'unique', 'top', 'freq', 'mean', 'std', 'min', '25%', '50%', '75%', 'max']
 
 # main
 def main():
@@ -96,21 +138,34 @@ def main():
     titles = data.pop(0)
     results = []
     for i, t in enumerate(titles):
+        print(t)
+        if (t == 'Index'):
+            continue
         feature = get_nth_feature(data, i)
-        res = get_stats(feature)
+        if t in COLUMN_NAMES:
+            res = get_stats(feature)
+        else:
+            res = get_stats_categorical(feature)
         results.append(res)
 
     # print first row
-    print('{:5}'.format(''), end='')
-    for key in COLUMN_NAMES:
-        print('{:>14.12}'.format(key), end='')
+    print('{:7}'.format(''), end='')
+    for t in titles:
+        if (t == 'Index'):
+            continue
+        print('{:>14.12}'.format(t), end='')
     print()
 
     # print results
     for f in fields:
-        print('{:<5}'.format(f), end='')
+        print('{:<7}'.format(f), end='')
         for res in results:
-            print('{:>14.6f}'.format(res[f]), end='')
+            if res[f] is None:
+                print('{:>14.6}'.format('Nan'), end='')
+            elif type(res[f]) is int:
+                print('{:>14}'.format(res[f]), end='')
+            elif type(res[f]) is float:
+                print('{:>14.6f}'.format(res[f]), end='')
         print()
 
 if __name__ == '__main__':
