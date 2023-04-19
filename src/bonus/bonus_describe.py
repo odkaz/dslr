@@ -11,16 +11,12 @@ def take_second(elem):
 def get_nth_element(data, n):
     return data[n]
 
-def is_unique(item, data):
-    if (data.count(item) == 1):
-        return True
-    else:
-        return False
-
 def get_unique(data):
+    keys = []
     count = 0
     for item in data:
-        if (is_unique(item, data)):
+        if item not in keys:
+            keys.append(item)
             count += 1
     return count
 
@@ -128,7 +124,9 @@ fields = ['count', 'unique', 'top', 'freq', 'mean', 'std', 'min', '25%', '50%', 
 # main
 def main():
     df = pd.read_csv('../../datasets/dataset_train.csv', index_col = 'Index')
-    print(df.describe(include='all'))
+
+    ############## take the comment off to compare ##############
+    # print(df.describe(include='all'))
     if len(sys.argv) != 2:
         url = '../../datasets/dataset_train.csv'
     else:
@@ -138,7 +136,6 @@ def main():
     titles = data.pop(0)
     results = []
     for i, t in enumerate(titles):
-        print(t)
         if (t == 'Index'):
             continue
         feature = get_nth_feature(data, i)
@@ -162,6 +159,8 @@ def main():
         for res in results:
             if res[f] is None:
                 print('{:>14.6}'.format('Nan'), end='')
+            elif type(res[f]) is str:
+                print('{:>14}'.format(res[f]), end='')
             elif type(res[f]) is int:
                 print('{:>14}'.format(res[f]), end='')
             elif type(res[f]) is float:
